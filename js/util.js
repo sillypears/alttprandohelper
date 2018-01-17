@@ -7,6 +7,10 @@
         return function(o) { return o[key] = value, o; }({});
     };
 
+    window.cast_array = function(value) {
+        return Array.isArray(value) ? value : [value];
+    };
+
     window.compact = function(array) {
         if (array == null) return [];
         return array.reduce(function(acc, value) {
@@ -102,4 +106,10 @@
         return e1.style.color.replace(/ /g, '') !== 'rgb(0,0,0)' ||
             e2.style.color.replace(/ /g, '') !== 'rgb(255,255,255)';
     };
+
+    update.extend('$addition', function(adds, original) {
+        return Object.keys(adds).reduce(function(original, key) {
+            return update(original, at(key, function(v) { return v + adds[key]; }));
+        }, original);
+    });
 }(window));
