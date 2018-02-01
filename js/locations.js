@@ -248,18 +248,18 @@
         darkness: { $merge: {
             chest_limit: 14,
             key_limit: 6,
-            is_completable: function(items) {
+            is_completable: function(items, model) {
                 if (!items.moonpearl || !(items.has_bow()) || !items.hammer) return 'unavailable';
-                if (!items.agahnim && !items.glove) return 'unavailable';
+                if (!model.agahnim() && !items.glove) return 'unavailable';
                 if (!this.big_key || this.keys === 0) return 'unavailable';
                 return items.lantern ?
                     this.keys < 6 ? 'possible' : 'available' :
                     'dark';
             },
-            is_progressable: function(items) {
+            is_progressable: function(items, model) {
                 // Todo: verify
                 if (!items.moonpearl) return 'unavailable';
-                if (!items.agahnim && !(items.hammer && items.glove) && !(items.glove === 2 && items.flippers)) return 'unavailable';
+                if (!model.agahnim() && !(items.hammer && items.glove) && !(items.glove === 2 && items.flippers)) return 'unavailable';
                 if (this.keys === 6 && this.big_key && items.hammer && items.has_bow() && items.lantern) return 'available';
 
                 var _this = this,
@@ -294,15 +294,15 @@
         swamp: { $merge: {
             chest_limit: 10,
             key_limit: 1,
-            is_completable: function(items) {
+            is_completable: function(items, model) {
                 if (!items.moonpearl || !items.mirror || !items.flippers) return 'unavailable';
                 if (!items.hammer || !items.hookshot || this.keys === 0) return 'unavailable';
-                if (!items.glove && !items.agahnim) return 'unavailable';
+                if (!items.glove && !model.agahnim()) return 'unavailable';
                 return 'available';
             },
             is_progressable: function(items, model) {
                 if (!items.moonpearl || !items.mirror || !items.flippers) return 'unavailable';
-                if (!items.can_reach_outcast(model) && !(items.agahnim && items.hammer)) return 'unavailable';
+                if (!items.can_reach_outcast(model.agahnim()) && !(model.agahnim() && items.hammer)) return 'unavailable';
                 if (this.big_key && this.keys === 1 && items.hammer && items.hookshot) return 'available';
                 if (this.chests === 10) return 'possible';
                 if (this.chests >= 9 && this.keys === 1) return 'possible';
@@ -317,7 +317,7 @@
             key_limit: 3,
             is_completable: dungeons.skull.is_completable,
             is_progressable: function(items, model) {
-                if (!items.can_reach_outcast(model)) return 'unavailable';
+                if (!items.can_reach_outcast(model.agahnim())) return 'unavailable';
                 if (this.big_key && items.sword > 0 && items.firerod) return 'available';
                 if (this.chests >= 4) return 'possible';
                 if (this.chests >= 3 && (this.big_key || items.firerod)) return 'possible';
@@ -334,7 +334,7 @@
                     'unavailable';
             },
             is_progressable: function(items, model) {
-                if (!items.can_reach_outcast(model)) return 'unavailable';
+                if (!items.can_reach_outcast(model.agahnim())) return 'unavailable';
                 if (this.big_key && this.keys === 1 && items.hammer) return 'available';
                 if (this.chests >= 5) return 'possible';
                 if (this.chests >= 3 && this.big_key) return 'possible';
