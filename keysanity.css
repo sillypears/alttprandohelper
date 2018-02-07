@@ -1,0 +1,139 @@
+#tracker .big-key { background-image: url(images/dungeons/big_key.png); }
+.keys { background-image: url(images/dungeons/key.png); }
+.keysanity #tracker .chest { background-image: url(images/dungeons/chest_single.png); }
+.keysanity #tracker .chest.empty { background-image: url(images/dungeons/chest_empty.png); }
+
+#map .first.eastern { background-image: url(images/overlay/map_eastern1.png); }
+#map .second.eastern { background-image: url(images/overlay/map_eastern2.png); }
+#map .first.desert { background-image: url(images/overlay/map_desert1.png); }
+#map .second.desert { background-image: url(images/overlay/map_desert2.png); }
+#map .first.hera { background-image: url(images/overlay/map_hera1.png); }
+#map .second.hera { background-image: url(images/overlay/map_hera2.png); }
+#map .first.darkness { background-image: url(images/overlay/map_darkness1.png); }
+#map .second.darkness { background-image: url(images/overlay/map_darkness2.png); }
+#map .first.swamp { background-image: url(images/overlay/map_swamp1.png); }
+#map .second.swamp { background-image: url(images/overlay/map_swamp2.png); }
+#map .first.skull { background-image: url(images/overlay/map_skull1.png); }
+#map .second.skull { background-image: url(images/overlay/map_skull2.png); }
+#map .first.thieves { background-image: url(images/overlay/map_thieves1.png); }
+#map .second.thieves { background-image: url(images/overlay/map_thieves2.png); }
+#map .first.ice { background-image: url(images/overlay/map_ice1.png); }
+#map .second.ice { background-image: url(images/overlay/map_ice2.png); }
+#map .first.mire { background-image: url(images/overlay/map_mire1.png); }
+#map .second.mire { background-image: url(images/overlay/map_mire2.png); }
+#map .first.turtle { background-image: url(images/overlay/map_turtle1.png); }
+#map .second.turtle { background-image: url(images/overlay/map_turtle2.png); }
+
+#map .door.desert .image { background-image: url(images/overlay/door_desert_closed.png); }
+#map .door.desert.opened .image { background-image: url(images/overlay/door_desert_closed.png); }
+#map .door.darkness .image { background-image: url(images/overlay/door_darkness_closed.png); }
+#map .door.darkness.opened .image { background-image: url(images/overlay/door_darkness_closed.png); }
+#map .door.turtle .image { background-image: url(images/overlay/door_turtle_closed.png); }
+#map .door.turtle.opened .image { background-image: url(images/overlay/door_turtle_closed.png); }
+
+#map .big-chest .image { background-image: url(images/overlay/big_chest.png); }
+#map .big-chest.marked .image { background-image: url(images/overlay/big_chest_empty.png); }
+
+#map .eastern .compass         { top: 50.0%; left: 50.0%; }
+#map .eastern .cannonball      { top: 50.0%; left: 50.0%; }
+#map .eastern .map             { top: 50.0%; left: 50.0%; }
+#map .eastern .big-chest       { top: 50.0%; left: 50.0%; }
+#map .eastern .big-key         { top: 50.0%; left: 50.0%; }
+#map .eastern .boss            { top: 50.0%; left: 50.0%; }
+
+#map .desert .north            { top: 50.0%; left: 50.0%; }
+#map .desert .south            { top: 50.0%; left: 50.0%; }
+#map .desert .boss             { top: 50.0%; left: 50.0%; }
+#map .desert .map              { top: 50.0%; left: 50.0%; }
+#map .desert .big-chest        { top: 50.0%; left: 50.0%; }
+#map .desert .torch            { top: 50.0%; left: 50.0%; }
+#map .desert .big-key          { top: 50.0%; left: 50.0%; }
+#map .desert .compass          { top: 50.0%; left: 50.0%; }
+
+#map .hera .compass            { top: 50.0%; left: 50.0%; }
+#map .hera .big-chest          { top: 50.0%; left: 50.0%; }
+#map .hera .boss               { top: 50.0%; left: 50.0%; }
+#map .hera .cage               { top: 50.0%; left: 50.0%; }
+#map .hera .map                { top: 50.0%; left: 50.0%; }
+#map .hera .big-key            { top: 50.0%; left: 50.0%; }
+
+#map .darkness .arena          { top: 50.0%; left: 50.0%; }
+#map .darkness .maze           { top: 50.0%; left: 50.0%; }
+#map .darkness .hellway        { top: 50.0%; left: 50.0%; }
+#map .darkness .boss           { top: 50.0%; left: 50.0%; }
+#map .darkness .front          { top: 50.0%; left: 50.0%; }
+#map .darkness .door.big-key   { top: 50.0%; left: 50.0%; }
+#map .darkness .arena-ledge    { top: 50.0%; left: 50.0%; }
+#map .darkness .map            { top: 50.0%; left: 50.0%; }
+#map .darkness .arena-bridge   { top: 50.0%; left: 50.0%; }
+#map .darkness .compass        { top: 50.0%; left: 50.0%; }
+#map .darkness .basement-left  { top: 50.0%; left: 50.0%; }
+#map .darkness .basement-right { top: 50.0%; left: 50.0%; }
+#map .darkness .big-chest      { top: 50.0%; left: 50.0%; }
+#map .darkness .hellway        { top: 50.0%; left: 50.0%; }
+#map .darkness .maze-top       { top: 50.0%; left: 50.0%; }
+#map .darkness .maze-bottom    { top: 50.0%; left: 50.0%; }
+#map .darkness .boss           { top: 50.0%; left: 50.0%; }
+#map .darkness .shooter        { top: 50.0%; left: 50.0%; }
+#map .darkness .stalfos        { top: 50.0%; left: 50.0%; }
+#map .darkness .big-key        { top: 50.0%; left: 50.0%; }
+
+#map .swamp .toilet-left       { top: 50.0%; left: 50.0%; }
+#map .swamp .toilet-right      { top: 50.0%; left: 50.0%; }
+#map .swamp .waterfall         { top: 50.0%; left: 50.0%; }
+#map .swamp .boss              { top: 50.0%; left: 50.0%; }
+#map .swamp .entrance          { top: 50.0%; left: 50.0%; }
+#map .swamp .map               { top: 50.0%; left: 50.0%; }
+#map .swamp .big-key           { top: 50.0%; left: 50.0%; }
+#map .swamp .west              { top: 50.0%; left: 50.0%; }
+#map .swamp .compass           { top: 50.0%; left: 50.0%; }
+#map .swamp .big-chest         { top: 50.0%; left: 50.0%; }
+
+#map .skull .bridge            { top: 50.0%; left: 50.0%; }
+#map .skull .boss              { top: 50.0%; left: 50.0%; }
+#map .skull .big-key           { top: 50.0%; left: 50.0%; }
+#map .skull .compass           { top: 50.0%; left: 50.0%; }
+#map .skull .map               { top: 50.0%; left: 50.0%; }
+#map .skull .pot-prison        { top: 50.0%; left: 50.0%; }
+#map .skull .big-chest         { top: 50.0%; left: 50.0%; }
+
+#map .thieves .cell            { top: 50.0%; left: 50.0%; }
+#map .thieves .big-chest       { top: 50.0%; left: 50.0%; }
+#map .thieves .boss            { top: 50.0%; left: 50.0%; }
+#map .thieves .big-key         { top: 50.0%; left: 50.0%; }
+#map .thieves .map             { top: 50.0%; left: 50.0%; }
+#map .thieves .compass         { top: 50.0%; left: 50.0%; }
+#map .thieves .ambush          { top: 50.0%; left: 50.0%; }
+#map .thieves .attic           { top: 50.0%; left: 50.0%; }
+
+#map .ice .spike               { top: 50.0%; left: 50.0%; }
+#map .ice .freezor             { top: 50.0%; left: 50.0%; }
+#map .ice .iced-t              { top: 50.0%; left: 50.0%; }
+#map .ice .big-chest           { top: 50.0%; left: 50.0%; }
+#map .ice .compass             { top: 50.0%; left: 50.0%; }
+#map .ice .big-key             { top: 50.0%; left: 50.0%; }
+#map .ice .map                 { top: 50.0%; left: 50.0%; }
+#map .ice .boss                { top: 50.0%; left: 50.0%; }
+
+#map .mire .main               { top: 50.0%; left: 50.0%; }
+#map .mire .compass            { top: 50.0%; left: 50.0%; }
+#map .mire .bridge             { top: 50.0%; left: 50.0%; }
+#map .mire .map                { top: 50.0%; left: 50.0%; }
+#map .mire .spike              { top: 50.0%; left: 50.0%; }
+#map .mire .big-chest          { top: 50.0%; left: 50.0%; }
+#map .mire .big-key            { top: 50.0%; left: 50.0%; }
+#map .mire .boss               { top: 50.0%; left: 50.0%; }
+
+#map .turtle .pipe             { top: 50.0%; left: 50.0%; }
+#map .turtle .big-key          { top: 50.0%; left: 50.0%; }
+#map .turtle .big-chest        { top: 50.0%; left: 50.0%; }
+#map .turtle .crystaroller     { top: 50.0%; left: 50.0%; }
+#map .turtle .eye-bl           { top: 50.0%; left: 50.0%; }
+#map .turtle .eye-br           { top: 50.0%; left: 50.0%; }
+#map .turtle .eye-tl           { top: 50.0%; left: 50.0%; }
+#map .turtle .eye-tr           { top: 50.0%; left: 50.0%; }
+#map .turtle .compass          { top: 50.0%; left: 50.0%; }
+#map .turtle .chain-chomps     { top: 50.0%; left: 50.0%; }
+#map .turtle .roller-left      { top: 50.0%; left: 50.0%; }
+#map .turtle .roller-right     { top: 50.0%; left: 50.0%; }
+#map .turtle .boss             { top: 50.0%; left: 50.0%; }

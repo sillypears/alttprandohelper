@@ -36,11 +36,12 @@
     };
 
     window.map = function(collection, iteratee) {
-        return Array.isArray(collection) ?
-            collection.map(iteratee) :
-            Object.keys(collection).map(function(key) {
-                return iteratee(collection[key], key, collection);
-            });
+        return collection == null ? [] :
+            Array.isArray(collection) ?
+                collection.map(iteratee) :
+                Object.keys(collection).map(function(key) {
+                    return iteratee(collection[key], key, collection);
+                });
     };
 
     window.map_values = function(object, iteratee) {
@@ -71,6 +72,17 @@
     window.property = function(key) {
         return function(object) { return object[key]; };
     };
+
+    window.result = function(key) {
+        return function(object) {
+            var value = object[key];
+            return typeof value === 'function' ? value.call(object) : value;
+        }
+    };
+
+    window.sum = function(array) {
+        return array.reduce(function(acc, value) { return acc + value; });
+    }
 
     // based on https://github.com/medialize/URI.js/blob/gh-pages/src/URI.js
     window.uri_query = memoize(function() {

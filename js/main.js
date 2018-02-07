@@ -360,6 +360,7 @@
                     as_location(name),
                     dungeon.completed || dungeon.can_complete(model.items, model),
                     { marked: dungeon.completed }),
+                onClick: function() { props.onClick(name); },
                 onMouseOver: function() { props.onHighlight(true); },
                 onMouseOut: function() { props.onHighlight(false); }
             }),
@@ -370,6 +371,7 @@
                         marked: dungeon.chests === 0,
                         highlight: props.highlighted
                     }),
+                onClick: function() { props.onClick(name); },
                 onMouseOver: function() { props.onHighlight(true); },
                 onMouseOut: function() { props.onHighlight(false); }
             })
@@ -398,39 +400,103 @@
         }
     });
 
+    var MiniMapDoor = function(props) {
+        var name = props.name,
+            model = props.model,
+            dungeon = model.dungeons[props.dungeon],
+            door = dungeon.doors[name];
+        return div('.door', {
+            className: classNames(
+                as_location(name),
+                props.dungeon,
+                door.opened || door.can_reach.call(dungeon, model.items, model),
+                { opened: door.opened })
+            },
+            div('.image')
+        );
+    };
+
+    var MiniMapLocation = function(props) {
+        var name = props.name,
+            model = props.model,
+            dungeon = model.dungeons[props.dungeon],
+            location = dungeon.locations[name];
+        return div('.location', {
+                className: classNames(
+                    as_location(name),
+                    location.marked || location.can_reach.call(dungeon, model.items, model),
+                    { marked: location.marked })
+            },
+            name === 'big_chest' && div('.image'),
+            name === 'boss' && div('.image.boss', { className: props.dungeon })
+        );
+    };
+
     var Map = createReactClass({
         getInitialState: function() {
             return { caption: null };
         },
 
         render: function() {
-            var model = this.props.model,
-                chest_click = this.props.chest_click,
-                change_caption = this.change_caption;
-
-            var locations = partition(flatten([
-                    map(model.chests, function(chest, name) {
-                        return { darkworld: chest.darkworld,
-                            tag: t(MapChestWithHighlight, { name: name, model: model, onClick: chest_click, change_caption: change_caption }) };
-                    }),
-                    map(model.encounters, function(encounter, name) {
-                        return { darkworld: encounter.darkworld,
-                            tag: t(MapEncounterWithHighlight, { name: name, model: model, change_caption: change_caption }) };
-                    }),
-                    map(model.dungeons, function(dungeon, name) {
-                        return { darkworld: dungeon.darkworld,
-                            tag: t(MapDungeonWithHighlight, { name: name, model: model, change_caption: change_caption }) };
-                    })
-                ]), function(x) { return !x.darkworld; }),
-                worlds = [
-                    div('.world-light', locations[0].map(property('tag'))),
-                    div('.world-dark', locations[1].map(property('tag')))
+            var dungeon = this.props.dungeon,
+                points = partition(
+                    dungeon ? this.dungeon_locations() : this.world_locations(),
+                    property('second')),
+                maps = [
+                    div('.first', { className: dungeon || 'world' }, points[1].map(property('tag'))),
+                    div('.second', { className: dungeon || 'world' }, points[0].map(property('tag')))
                 ];
 
             return div('#map', { className: classNames({ cell: this.props.horizontal }) },
-                this.props.horizontal ? grid.call(null, worlds) : worlds,
+                this.props.horizontal ? grid.call(null, maps) : maps,
                 t(Caption, { text: this.state.caption })
             );
+        },
+
+        world_locations: function() {
+            var model = this.props.model,
+                chest_click = this.props.chest_click,
+                dungeon_click = this.dungeon_click,
+                change_caption = this.change_caption;
+
+            return flatten([
+                map(model.chests, function(chest, name) {
+                    return { second: chest.darkworld,
+                        tag: t(MapChestWithHighlight, { name: name, model: model, onClick: chest_click, change_caption: change_caption }) };
+                }),
+                map(model.encounters, function(encounter, name) {
+                    return { second: encounter.darkworld,
+                        tag: t(MapEncounterWithHighlight, { name: name, model: model, change_caption: change_caption }) };
+                }),
+                map(model.dungeons, function(dungeon, name) {
+                    return { second: dungeon.darkworld,
+                        tag: t(MapDungeonWithHighlight, { name: name, model: model, onClick: dungeon_click, change_caption: change_caption }) };
+                })
+            ]);
+        },
+
+        dungeon_locations: function(dungeon_name) {
+            var model = this.props.model,
+                dungeon_name = this.props.dungeon,
+                dungeon = model.dungeons[dungeon_name];
+
+            return flatten([
+                map(dungeon.doors, function(door, name) {
+                    return { second: door.second_map,
+                        tag: t(MiniMapDoor, { name: name, dungeon: dungeon_name, model: model }) };
+                }),
+                map(dungeon.locations, function(location, name) {
+                    return { second: location.second_map,
+                        tag: t(MiniMapLocation, { name: name, dungeon: dungeon_name, model: model }) };
+                })
+            ]);
+        },
+
+        dungeon_click: function(name) {
+            if (this.props.dungeon_click) {
+                this.props.dungeon_click(name);
+                this.change_caption(null);
+            }
         },
 
         change_caption: function(caption) {
@@ -477,11 +543,31 @@
                         big_key_click: this.big_key_click,
                         key_click: this.key_click
                     })),
-                (query.hmap || query.vmap) && t(Map, {
+                (query.hmap || query.vmap) && t(Map, Object.assign({
                     chest_click: this.map_chest_click,
                     horizontal: query.hmap,
                     model: this.state.model
-                }));
+                }, !keysanity ? null : {
+                    dungeon_click: this.map_dungeon_click,
+                    dungeon: this.state.dungeon
+                }))
+            );
+        },
+
+        componentDidMount: function() {
+            document.addEventListener('keydown', this.escape_press);
+        },
+
+        componentWillUnmount: function() {
+            document.removeEventListener('keydown', this.escape_press);
+        },
+
+        map_dungeon_click: function(name) {
+            this.setState({ dungeon: name });
+        },
+
+        escape_press: function(event) {
+            event.key === 'Escape' && this.setState({ dungeon: null });
         },
 
         item_click: function(name) {
