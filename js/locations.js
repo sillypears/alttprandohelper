@@ -7,78 +7,85 @@
         eastern: {
             caption: 'Eastern Palace {lantern}',
             chest_limit: 3,
-            is_completable: function(items) {
+            can_complete: function(items) {
                 return items.has_bow() ?
                     items.lantern ? 'available' : 'dark' :
                     'unavailable';
             },
-            is_progressable: function(items) {
-                return this.chests <= 2 && !items.lantern ||
-                    this.chests === 1 && !items.has_bow() ?
-                    'possible' : 'available';
+            can_progress: function(items) {
+                return (this.chests > 2 || items.lantern) &&
+                    (this.chests > 1 || items.has_bow()) ?
+                    'available' : 'possible';
             }
         },
         desert: {
             caption: 'Desert Palace',
             chest_limit: 2,
-            is_completable: function(items) {
+            can_enter: function(items) {
+                return items.book || items.flute && items.glove === 2 && items.mirror;
+            },
+            can_complete: function(items) {
                 if (!(items.has_melee_bow() || items.has_cane() || items.has_rod())) return 'unavailable';
-                if (!(items.book && items.glove) && !(items.flute && items.glove === 2 && items.mirror)) return 'unavailable';
-                if (!items.lantern && !items.firerod) return 'unavailable';
+                if (!this.can_enter()) return 'unavailable';
+                if (!items.has_fire()) return 'unavailable';
                 return items.boots ? 'available' : 'possible';
             },
-            is_progressable: function(items) {
-                if (!items.book && !(items.flute && items.glove === 2 && items.mirror)) return 'unavailable';
-                if (items.glove && (items.firerod || items.lantern) && items.boots) return 'available';
+            can_progress: function(items) {
+                if (!this.can_enter()) return 'unavailable';
+                if (items.glove && items.has_fire() && items.boots) return 'available';
                 return this.chests > 1 && items.boots ? 'available' : 'possible';
             }
         },
         hera: {
             caption: 'Tower of Hera',
             chest_limit: 2,
-            is_completable: function(items) {
-                if (!items.has_melee()) return 'unavailable';
-                return this.is_progressable(items);
+            can_enter: function(items) {
+                return (items.mirror || items.hookshot && items.hammer) && (items.glove || items.flute);
             },
-            is_progressable: function(items) {
-                if (!items.flute && !items.glove) return 'unavailable';
-                if (!items.mirror && !(items.hookshot && items.hammer)) return 'unavailable';
-                return items.firerod || items.lantern ?
-                    items.flute || items.lantern ? 'available' : 'dark' :
-                    'possible';
+            can_complete: function(items) {
+                return items.has_melee() ? this.can_progress(items) : 'unavailable';
+            },
+            can_progress: function(items) {
+                return this.can_enter(items) ?
+                    items.has_fire() ?
+                        items.flute || items.lantern ? 'available' : 'dark' :
+                        'possible' :
+                    'unavailable';
             }
         },
         darkness: {
             caption: 'Palace of Darkness {lantern}',
             darkworld: true,
             chest_limit: 5,
-            is_completable: function(items, model) {
-                if (!items.moonpearl || !items.has_bow() || !items.hammer) return 'unavailable';
-                if (!model.agahnim() && !items.glove) return 'unavailable';
-                return items.lantern ? 'available' : 'dark';
+            can_enter: function(items, model) {
+                return items.moonpearl && (model.agahnim() || items.glove && items.hammer || items.glove === 2 && items.flippers);
             },
-            is_progressable: function(items, model) {
-                if (!items.moonpearl) return 'unavailable';
-                if (!model.agahnim() && !(items.hammer && items.glove) && !(items.glove === 2 && items.flippers)) return 'unavailable';
-                return !(items.has_bow() && items.lantern) ||
-                    this.chests === 1 && !items.hammer ?
-                    'possible' : 'available';
+            can_complete: function(items, model) {
+                return this.can_enter(items, model) && items.has_bow() && items.hammer ?
+                    items.lantern ? 'available' : 'dark' :
+                    'unavailable';
+            },
+            can_progress: function(items, model) {
+                return this.can_enter(items, model) ?
+                    items.has_bow() && items.lantern ||
+                        this.chests > 1 || items.hammer ?
+                        'available' : 'possible' :
+                    'unavailable';
             }
         },
         swamp: {
             caption: 'Swamp Palace {mirror}',
             darkworld: true,
             chest_limit: 6,
-            is_completable: function(items, model) {
-                if (!items.moonpearl || !items.mirror || !items.flippers) return 'unavailable';
-                if (!items.hammer || !items.hookshot) return 'unavailable';
-                if (!items.glove && !model.agahnim()) return 'unavailable';
-                return 'available';
+            can_enter: function(items, model) {
+                return items.moonpearl && items.mirror && items.flippers &&
+                    (items.can_reach_outcast(model.agahnim()) || model.agahnim() && items.hammer);
             },
-            is_progressable: function(items, model) {
-                if (!items.moonpearl || !items.mirror || !items.flippers) return 'unavailable';
-                if (!items.can_reach_outcast(model.agahnim()) && !(model.agahnim() && items.hammer)) return 'unavailable';
-
+            can_complete: function(items, model) {
+                return this.can_enter(items, model) && items.hammer && items.hookshot ? 'available' : 'unavailable';
+            },
+            can_progress: function(items, model) {
+                if (!this.can_enter(items, model)) return 'unavailable';
                 if (this.chests <= 2) return !items.hammer || !items.hookshot ? 'unavailable' : 'available';
                 if (this.chests <= 4) return !items.hammer ? 'unavailable' : !items.hookshot ? 'possible' : 'available';
                 if (this.chests <= 5) return !items.hammer ? 'unavailable' : 'available';
@@ -89,89 +96,93 @@
             caption: 'Skull Woods',
             darkworld: true,
             chest_limit: 2,
-            is_completable: function(items, model) {
-                return !items.can_reach_outcast(model.agahnim()) || !items.firerod || !items.sword ? 'unavailable' : 'available';
+            can_enter: function(items, model) {
+                return items.can_reach_outcast(model.agahnim());
             },
-            is_progressable: function(items, model) {
-                if (!items.can_reach_outcast(model.agahnim())) return 'unavailable';
-                return items.firerod ? 'available' : 'possible';
+            can_complete: function(items, model) {
+                return this.can_enter(items, model) &&
+                    items.firerod && items.sword ? 'available' : 'unavailable';
+            },
+            can_progress: function(items, model) {
+                return this.can_enter(items, model) ?
+                    items.firerod ? 'available' : 'possible' :
+                    'unavailable';
             }
         },
         thieves: {
             caption: 'Thieves\' Town',
             darkworld: true,
             chest_limit: 4,
-            is_completable: function(items, model) {
-                if (!(items.has_melee() || items.has_cane())) return 'unavailable';
-                if (!items.can_reach_outcast(model.agahnim())) return 'unavailable';
-                return 'available';
+            can_enter: function(items, model) {
+                return items.can_reach_outcast(model.agahnim());
             },
-            is_progressable: function(items, model) {
-                if (!items.can_reach_outcast(model.agahnim())) return 'unavailable';
-                return this.chests === 1 && !items.hammer ? 'possible' : 'available';
+            can_complete: function(items, model) {
+                return (items.has_melee() || items.has_cane()) && this.can_enter(items, model) ? 'available' : 'unavailable';
+            },
+            can_progress: function(items, model) {
+                return this.can_enter(items, model) ?
+                    this.chests > 1 || items.hammer ? 'available' : 'possible' :
+                    'unavailable';
             }
         },
         ice: {
             caption: 'Ice Palace (yellow=must bomb jump)',
             darkworld: true,
             chest_limit: 3,
-            is_completable: function(items) {
-                if (!items.moonpearl || !items.flippers || items.glove !== 2 || !items.hammer) return 'unavailable';
-                if (!items.firerod && !(items.bombos && items.sword)) return 'unavailable';
-                return items.hookshot || items.somaria ? 'available' : 'possible';
+            can_enter: function(items) {
+                return items.moonpearl && items.flippers && items.glove === 2 && (items.firerod || items.sword && items.bombos);
             },
-            is_progressable: function(items) {
-                if (!items.moonpearl || !items.flippers || items.glove !== 2) return 'unavailable';
-                if (!items.firerod && !(items.bombos && items.sword)) return 'unavailable';
-                return items.hammer ? 'available' : 'possible';
+            can_complete: function(items) {
+                return this.can_enter(items) && items.hammer ?
+                    items.hookshot || items.somaria ? 'available' : 'possible' :
+                    'unavailable';
+            },
+            can_progress: function(items) {
+                return this.can_enter(items) ?
+                    items.hammer ? 'available' : 'possible' :
+                    'unavailable';
             }
         },
         mire: {
             caption: medallion_caption('Misery Mire {medallion}{lantern}', 'mire'),
             darkworld: true,
             chest_limit: 2,
-            is_completable: function(items) {
-                if (!items.has_melee_bow()) return 'unavailable';
-                if (!items.moonpearl || !items.flute || items.glove !== 2 || !items.somaria) return 'unavailable';
-                if (!items.boots && !items.hookshot) return 'unavailable';
-                var state = items.medallion_check(this.medallion);
-                if (state) return state;
-
-                return items.lantern || items.firerod ?
-                    items.lantern ? 'available' : 'dark' :
-                    'possible';
+            can_enter: function(items) {
+                return items.moonpearl && items.flute && items.glove === 2 && (items.boots || items.hookshot);
             },
-            is_progressable: function(items) {
-                if (!items.moonpearl || !items.flute || items.glove !== 2) return 'unavailable';
-                if (!items.boots && !items.hookshot) return 'unavailable';
-                var state = items.medallion_check(this.medallion);
-                if (state) return state;
-
-                return (this.chests > 1 ?
-                    items.lantern || items.firerod :
-                    items.lantern && items.somaria) ?
-                    'available' : 'possible';
+            can_complete: function(items) {
+                return this.can_enter(items) && items.somaria ?
+                    items.medallion_check(this.medallion) || (items.has_fire() ?
+                        items.lantern ? 'available' : 'dark' :
+                        'possible') :
+                    'unavailable';
+            },
+            can_progress: function(items) {
+                return this.can_enter() ?
+                    items.medallion_check(this.medallion) || (
+                        (this.chests > 1 ?
+                            items.has_fire() :
+                            items.lantern && items.somaria) ?
+                        'available' : 'possible') :
+                    'unavailable';
             }
         },
         turtle: {
             caption: medallion_caption('Turtle Rock {medallion}{lantern}', 'turtle'),
             darkworld: true,
             chest_limit: 5,
-            is_completable: function(items) {
-                if (!items.moonpearl || !items.hammer || items.glove !== 2 || !items.somaria) return 'unavailable';
-                if (!items.hookshot && !items.mirror) return 'unavailable';
-                if (!items.icerod || !items.firerod) return 'unavailable';
-                var state = items.medallion_check(this.medallion);
-                if (state) return state;
-
-                return items.byrna || items.cape || items.shield === 3 ?
-                    items.lantern ? 'available' : 'dark' :
-                    'possible';
+            can_enter: function(items) {
+                return items.moonpearl && items.hammer && items.glove === 2 && items.somaria && (items.hookshot || items.mirror);
             },
-            is_progressable: function(items) {
-                if (!items.moonpearl || !items.hammer || items.glove !== 2 || !items.somaria) return 'unavailable';
-                if (!items.hookshot && !items.mirror) return 'unavailable';
-                var state = items.medallion_check(this.medallion);
+            can_complete: function(items) {
+                this.can_enter(items) && items.icerod && items.firerod ?
+                    items.medallion_check(this.medallion) || (items.byrna || items.cape || items.shield === 3 ?
+                        items.lantern ? 'available' : 'dark' :
+                        'possible') :
+                'unavailable';
+            },
+            can_progress: function(items) {
+                var state = this.can_enter(items) ? items.medallion_check(this.medallion) : 'unavailable';
                 if (state) return state;
 
                 var laser_safety = items.byrna || items.cape || items.shield === 3,
@@ -189,77 +200,74 @@
         eastern: { $merge: {
             chest_limit: 6,
             key_limit: 0,
-            is_completable: function(items) {
-                return this.big_key ? dungeons.eastern.is_completable.call(this, items) : 'unavailable';
+            can_complete: function(items) {
+                return this.big_key ? dungeons.eastern.can_complete.call(this, items) : 'unavailable';
             },
-            is_progressable: function(items) {
+            can_progress: function(items) {
                 if (this.big_key && items.has_bow() && items.lantern) return 'available';
-                if (this.chests >= 4) return 'possible';
-                if (this.chests >= 3) return this.big_key || items.lantern ? 'possible' : 'dark';
-                if (this.chests >= 2 && this.big_key) return items.lantern ? 'possible' : 'dark';
-                if (this.big_key && items.has_bow() && !items.lantern) return 'dark';
-                return 'unavailable';
+                if (this.chests > 3) return 'possible';
+                if (this.chests > 2) return this.big_key || items.lantern ? 'possible' : 'dark';
+                if (this.chests > 1 && this.big_key) return items.lantern ? 'possible' : 'dark';
+                return this.big_key && items.has_bow() && !items.lantern ? 'dark' : 'unavailable';
             }
         } },
         desert: { $merge: {
             chest_limit: 6,
             key_limit: 1,
-            is_completable: function(items) {
+            can_complete: function(items) {
                 if (!this.big_key) return 'unavailable';
                 // Todo: why no boots check?
-                var state = dungeons.desert.is_completable.call(this, items);
+                var state = dungeons.desert.can_complete.call(this, items);
                 return state === 'possible' ? 'available' : state;
             },
-            is_progressable: function(items) {
-                if (!items.book && !(items.flute && items.glove === 2 && items.mirror)) return 'unavailable';
-                if (this.big_key && this.keys === 1 && items.glove && (items.lantern || items.firerod) && items.boots) return 'available';
+            can_progress: function(items) {
+                if (!this.can_enter(items)) return 'unavailable';
+                if (this.big_key && this.keys && items.glove && (items.lantern || items.firerod) && items.boots) return 'available';
                 if (this.chests === 6) return 'possible';
-                if (this.chests >= 5 && (this.big_key || items.boots)) return 'possible';
-                if (this.chests >= 4 && (this.keys === 1 || (this.big_key && items.boots))) return 'possible';
-                if (this.chests >= 4 && this.big_key && (items.lantern || items.firerod)) return 'possible';
-                if (this.chests >= 3 && this.keys === 1 && (this.big_key || items.boots)) return 'possible';
-                if (this.chests >= 3 && this.big_key && items.boots && (items.lantern || items.firerod)) return 'possible';
-                if (this.chests >= 2 && this.big_key && this.keys === 1 && ((items.glove && items.lantern) || items.boots)) return 'possible';
+                if (this.chests > 4 && (this.big_key || items.boots)) return 'possible';
+                if (this.chests > 3 && (this.keys || (this.big_key && items.boots))) return 'possible';
+                if (this.chests > 3 && this.big_key && (items.lantern || items.firerod)) return 'possible';
+                if (this.chests > 2 && this.keys && (this.big_key || items.boots)) return 'possible';
+                if (this.chests > 2 && this.big_key && items.boots && (items.lantern || items.firerod)) return 'possible';
+                if (this.chests > 1 && this.big_key && this.keys && ((items.glove && items.lantern) || items.boots)) return 'possible';
                 return 'unavailable';
             }
         } },
         hera: { $merge: {
             chest_limit: 6,
             key_limit: 1,
-            is_completable: function(items) {
-                if (!this.big_key || !items.has_melee()) return 'unavailable';
-                if (!items.flute && !items.glove) return 'unavailable';
-                if (!items.mirror && !(items.hookshot && items.hammer)) return 'unavailable';
-                return !items.flute && !items.lantern ? 'dark' : 'available';
+            can_complete: function(items) {
+                return this.big_key && items.has_melee() && this.can_enter(items) ?
+                    items.flute || items.lantern ? 'available' : 'dark';
+                    'unavailable';
             },
-            is_progressable: function(items) {
-                if (!(items.flute || items.glove) || !(items.mirror || (items.hookshot && items.hammer))) return 'unavailable';
-                if (this.big_key && this.keys === 1 && items.has_melee() && (items.lantern || items.firerod))
-                    return (!items.flute && !items.lantern) ? 'dark' : 'available';
-                if (this.chests >= 5) return (!items.flute && !items.lantern) ? 'dark' : 'possible';
-                if (this.chests >= 4 && this.keys === 1 && (items.firerod || items.lantern))
-                    return (!items.flute && !items.lantern) ? 'dark' : 'possible';
-                if (this.chests >= 3 && this.big_key) return (!items.flute && !items.lantern) ? 'dark' : 'possible';
-                if (this.chests >= 2 && this.big_key && (items.has_melee() || (this.keys === 1 && (items.firerod || items.lantern))))
-                    return (!items.flute && !items.lantern) ? 'dark' : 'possible';
+            can_progress: function(items) {
+                if (!this.can_enter(items)) return 'unavailable';
+                if (this.big_key && this.keys === 1 && items.has_melee() && items.has_fire())
+                    return items.flute || items.lantern ? 'available' : 'dark';
+                if (this.chests >= 5) return items.flute || items.lantern ? 'possible' : 'dark';
+                if (this.chests >= 4 && this.keys === 1 && items.has_fire())
+                    return items.flute || items.lantern ? 'possible' : 'dark';
+                if (this.chests >= 3 && this.big_key) return items.flute || items.lantern ? 'possible' : 'dark';
+                if (this.chests >= 2 && this.big_key && (items.has_melee() || this.keys === 1 && items.has_fire()))
+                    return items.flute || items.lantern ? 'possible' : 'dark';
                 return 'unavailable';
             }
         } },
         darkness: { $merge: {
             chest_limit: 14,
             key_limit: 6,
-            is_completable: function(items, model) {
-                if (!items.moonpearl || !(items.has_bow()) || !items.hammer) return 'unavailable';
-                if (!model.agahnim() && !items.glove) return 'unavailable';
-                if (!this.big_key || this.keys === 0) return 'unavailable';
-                return items.lantern ?
-                    this.keys < 6 ? 'possible' : 'available' :
-                    'dark';
+            can_complete: function(items, model) {
+                return this.can_enter(items, model) && items.has_bow() && items.hammer &&
+                    this.big_key && this.keys ?
+                        items.lantern ?
+                            this.keys > 5 ? 'available' : 'possible' :
+                            'dark' :
+                    'unavailable';
             },
-            is_progressable: function(items, model) {
+            can_progress: function(items, model) {
                 // Todo: verify
-                if (!items.moonpearl) return 'unavailable';
-                if (!model.agahnim() && !(items.hammer && items.glove) && !(items.glove === 2 && items.flippers)) return 'unavailable';
+                if (!this.can_enter(items, model)) return 'unavailable';
                 if (this.keys === 6 && this.big_key && items.hammer && items.has_bow() && items.lantern) return 'available';
 
                 var _this = this,
@@ -294,15 +302,11 @@
         swamp: { $merge: {
             chest_limit: 10,
             key_limit: 1,
-            is_completable: function(items, model) {
-                if (!items.moonpearl || !items.mirror || !items.flippers) return 'unavailable';
-                if (!items.hammer || !items.hookshot || this.keys === 0) return 'unavailable';
-                if (!items.glove && !model.agahnim()) return 'unavailable';
-                return 'available';
+            can_complete: function(items, model) {
+                return this.can_enter(items, model) && items.hammer && items.hookshot && this.keys ? 'available' : 'unavailable';
             },
-            is_progressable: function(items, model) {
-                if (!items.moonpearl || !items.mirror || !items.flippers) return 'unavailable';
-                if (!items.can_reach_outcast(model.agahnim()) && !(model.agahnim() && items.hammer)) return 'unavailable';
+            can_progress: function(items, model) {
+                if (!this.can_enter(items, model)) return 'unavailable';
                 if (this.big_key && this.keys === 1 && items.hammer && items.hookshot) return 'available';
                 if (this.chests === 10) return 'possible';
                 if (this.chests >= 9 && this.keys === 1) return 'possible';
@@ -315,9 +319,9 @@
         skull: { $merge: {
             chest_limit: 8,
             key_limit: 3,
-            is_completable: dungeons.skull.is_completable,
-            is_progressable: function(items, model) {
-                if (!items.can_reach_outcast(model.agahnim())) return 'unavailable';
+            can_complete: dungeons.skull.can_complete,
+            can_progress: function(items, model) {
+                if (!this.can_enter(items, model)) return 'unavailable';
                 if (this.big_key && items.sword > 0 && items.firerod) return 'available';
                 if (this.chests >= 4) return 'possible';
                 if (this.chests >= 3 && (this.big_key || items.firerod)) return 'possible';
@@ -328,13 +332,13 @@
         thieves: { $merge: {
             chest_limit: 8,
             key_limit: 1,
-            is_completable: function(items) {
+            can_complete: function(items) {
                 return this.big_key ?
-                    dungeons.thieves.is_completable.call(this, items) :
+                    dungeons.thieves.can_complete.call(this, items) :
                     'unavailable';
             },
-            is_progressable: function(items, model) {
-                if (!items.can_reach_outcast(model.agahnim())) return 'unavailable';
+            can_progress: function(items, model) {
+                if (!this.can_enter(items, model)) return 'unavailable';
                 if (this.big_key && this.keys === 1 && items.hammer) return 'available';
                 if (this.chests >= 5) return 'possible';
                 if (this.chests >= 3 && this.big_key) return 'possible';
@@ -345,44 +349,34 @@
         ice: { $merge: {
             chest_limit: 8,
             key_limit: 2,
-            is_completable: function(items) {
-                if (!items.moonpearl || !items.flippers || items.glove !== 2 || !items.hammer) return 'unavailable';
-                if (!items.firerod && !(items.bombos && items.sword)) return 'unavailable';
-                if (this.big_key && ((this.keys > 0 && items.somaria) || this.keys > 1)) return 'available';
-                // via bomb jump
-                return 'possible';
+            can_complete: function(items) {
+                return this.can_enter(items) ?
+                    this.big_key && (this.keys > 1 || this.keys && items.somaria) ? 'available' : 'possible' :
+                    'unavailable';
             },
-            is_progressable: function(items) {
+            can_progress: function(items) {
                 // Todo: verify
                 // Logic to match Standard/Open to list possible if wanting to do bomb jump,
                 // does allow logic to leave and re-enter dungeon after picking up dungeon small keys
-                if (!items.moonpearl || !items.flippers || items.glove !== 2) return 'unavailable';
-                if (!items.firerod && !(items.bombos && items.sword)) return 'unavailable';
-                if (this.big_key && items.hammer) return this.keys === 2 || this.keys === 1 && items.somaria ? 'available' : 'possible';
-                if (this.chests >= 5) return 'possible';
-                if (this.chests >= 4 && this.big_key) return 'possible';
-                if (this.chests >= 2 && items.hammer) return 'possible';
+                if (!this.can_enter()) return 'unavailable';
+                if (this.big_key && items.hammer) return this.keys > 1 || this.keys && items.somaria ? 'available' : 'possible';
+                if (this.chests > 4) return 'possible';
+                if (this.chests > 3 && this.big_key) return 'possible';
+                if (this.chests > 1 && items.hammer) return 'possible';
                 return 'unavailable';
             }
         } },
         mire: { $merge: {
             chest_limit: 8,
             key_limit: 3,
-            is_completable: function(items, model) {
-                if (!items.has_melee_bow()) return 'unavailable';
-                if (!items.moonpearl || !items.flute || items.glove !== 2 || !items.somaria) return 'unavailable';
-                if (!items.boots && !items.hookshot) return 'unavailable';
-                var state = items.medallion_check(this.medallion);
-                if (state) return state;
-
-                return this.big_key ?
-                    items.lantern ? 'available' : 'dark' :
+            can_complete: function(items) {
+                return this.can_enter(items) && items.somaria && this.big_key ?
+                    items.medallion_check(this.medallion) || (items.lantern ? 'available' : 'dark') :
                     'unavailable';
+
             },
-            is_progressable: function(items, model) {
-                if (!items.moonpearl || !items.flute || items.glove !== 2) return 'unavailable';
-                if (!items.boots && !items.hookshot) return 'unavailable';
-                var state = items.medallion_check(this.medallion);
+            can_progress: function(items) {
+                var state = this.can_enter(items) ? items.medallion_check(this.medallion) : 'unavailable';
                 if (state) return state;
 
                 if (items.lantern && this.big_key && items.somaria) return 'available';
@@ -397,37 +391,31 @@
         turtle: { $merge: {
             chest_limit: 12,
             key_limit: 4,
-            is_completable: function(items, model) {
-                if (!items.moonpearl || !items.hammer || items.glove !== 2 || !items.somaria) return 'unavailable';
-                if (!items.hookshot && !items.mirror) return 'unavailable';
-                if (!items.icerod || !items.firerod) return 'unavailable';
-                if (!this.big_key || this.keys < 3) return 'unavailable';
-                var state = items.medallion_check(this.medallion);
-                if (state) return state;
-                
-                if (items.smallkey9 === 3) return items.lantern ? 'possible' : 'dark';
-                return items.lantern ? 'available' : 'dark';
+            can_complete: function(items) {
+                this.can_enter(items) && items.icerod && items.firerod && this.big_key && this.keys > 2 ?
+                    items.medallion_check(this.medallion) || (items.lantern ?
+                        this.keys === 3 ? 'possible' : 'available' :
+                        'dark');
+                    'unavailable';
             },
-            is_progressable: function(items, model) {
+            can_progress: function(items) {
                 // Todo: verify
-                if (!items.moonpearl || !items.hammer || items.glove !== 2 || !items.somaria) return 'unavailable';
-                if (!items.hookshot && !items.mirror) return 'unavailable';
-                var state = items.medallion_check(this.medallion);
+                var state = this.can_enter(items) ? items.medallion_check(this.medallion) : 'unavailable';
                 if (state) return state;
 
                 var laser_safety = items.byrna || items.cape || items.shield === 3,
                     dark_room = items.lantern ? 'possible' : 'dark';
                 if (this.big_key && this.keys === 4 && items.firerod && items.icerod && items.lantern && laser_safety) return 'available';
-                if (this.chests >= 12) return 'possible';
-                if (this.chests >= 10 && (items.firerod || this.keys >= 2)) return 'possible';
-                if (this.chests >= 9 && (this.big_key && this.keys >= 2 || this.keys >= 1 && items.firerod)) return 'possible';
-                if (this.chests >= 8 && this.keys >= 2 && items.firerod) return 'possible';
-                if (this.chests >= 7 && this.big_key && this.keys >= 2 && items.firerod) return 'possible';
-                if (this.chests >= 5 && this.big_key && this.keys >= 2 && laser_safety) return dark_room;
-                if (this.chests >= 4 && this.big_key && this.keys >= 3 && laser_safety) return dark_room;
-                if (this.chests >= 3 && this.big_key && this.keys >= 2 && items.firerod && laser_safety) return dark_room;
-                if (this.chests >= 3 && this.big_key && this.keys === 4 && items.firerod && items.icerod) return dark_room;
-                if (this.chests >= 2 && this.big_key && this.keys >= 3 && items.firerod && laser_safety) return dark_room;
+                if (this.chests > 11) return 'possible';
+                if (this.chests > 9 && (items.firerod || this.keys > 1)) return 'possible';
+                if (this.chests > 8 && (this.big_key && this.keys > 1 || this.keys && items.firerod)) return 'possible';
+                if (this.chests > 7 && this.keys > 1 && items.firerod) return 'possible';
+                if (this.chests > 6 && this.big_key && this.keys > 1 && items.firerod) return 'possible';
+                if (this.chests > 4 && this.big_key && this.keys > 1 && laser_safety) return dark_room;
+                if (this.chests > 3 && this.big_key && this.keys > 2 && laser_safety) return dark_room;
+                if (this.chests > 2 && this.big_key && this.keys > 1 && items.firerod && laser_safety) return dark_room;
+                if (this.chests > 2 && this.big_key && this.keys === 4 && items.firerod && items.icerod) return dark_room;
+                if (this.chests > 1 && this.big_key && this.keys > 2 && items.firerod && laser_safety) return dark_room;
                 return 'unavailable';
             }
         } }
@@ -436,7 +424,7 @@
     var encounters = {
         agahnim: {
             caption: 'Agahnim {sword2}/ ({cape}{sword1}){lantern}',
-            is_completable: function(items) {
+            can_complete: function(items) {
                 return items.sword >= 2 || items.cape && items.sword ?
                     items.lantern ? 'available' : 'dark' :
                     'unavailable';
@@ -446,9 +434,9 @@
 
     var keysanity_encounters = update(encounters, {
         agahnim: { $merge: {
-            is_completable: function(items, model) {
+            can_complete: function(items, model) {
                 return model.regions.castle_tower.keys === 2 ?
-                    encounters.agahnim.is_completable.call(this, items) :
+                    encounters.agahnim.can_complete.call(this, items) :
                     'unavailable';
             }
         } }
