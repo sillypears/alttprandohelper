@@ -80,14 +80,15 @@
                         this.item('shield'),
                         this.item('moonpearl'),
                     ]], [
-                        this.dungeon('eastern'),
-                        this.chest('eastern')
+                        this.dungeon('hera'),
+                        this.chest('hera')                        
+
                     ], [
                         this.dungeon('desert'),
                         this.chest('desert')
                     ], [
-                        this.dungeon('hera'),
-                        this.chest('hera')
+                        this.dungeon('eastern'),
+                        this.chest('eastern')
                     ]),
                     grid([
                         this.item('bow'),
@@ -121,20 +122,20 @@
                         this.item('agahnim')
                     ])
                 ], [
-                    this.dungeon('darkness'),
-                    this.dungeon('swamp'),
                     this.dungeon('skull'),
                     this.dungeon('thieves'),
-                    this.dungeon('ice'),
                     this.medallion_dungeon('mire'),
+                    this.dungeon('swamp'),
+                    this.dungeon('ice'),                    
+                    this.dungeon('darkness'),
                     this.medallion_dungeon('turtle')
                 ], [
-                    this.chest('darkness'),
-                    this.chest('swamp'),
                     this.chest('skull'),
                     this.chest('thieves'),
-                    this.chest('ice'),
                     this.chest('mire'),
+                    this.chest('swamp'),
+                    this.chest('ice'),
+                    this.chest('darkness'),
                     this.chest('turtle')
                 ]));
         },
