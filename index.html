@@ -14,14 +14,24 @@
   </style>
 </head>
 <body>
-
+  <div>
+    <label>Standard Random</label>
+    <button type="button" class="launch" data-mode="standard" data-sword="no" data-map="no">Tracker only</button>
+    <button type="button" class="launch" data-mode="standard" data-sword="no" data-map="hmap">Horizontal map</button>
+    <button type="button" class="launch" data-mode="standard" data-sword="no" data-map="vmap">Vertical map</button>
+  </div>
   <div>
     <label>Standard</label>
     <button type="button" class="launch" data-mode="standard" data-map="no">Tracker only</button>
     <button type="button" class="launch" data-mode="standard" data-map="hmap">Horizontal map</button>
     <button type="button" class="launch" data-mode="standard" data-map="vmap">Vertical map</button>
   </div>
-
+  <div>
+    <label>Open Random</label>
+    <button type="button" class="launch" data-mode="open" data-sword="no" data-map="no">Tracker only</button>
+    <button type="button" class="launch" data-mode="open" data-sword="no" data-map="hmap">Horizontal map</button>
+    <button type="button" class="launch" data-mode="open" data-sword="no" data-map="vmap">Vertical map</button>
+  </div>
   <div>
     <label>Open</label>
     <button type="button" class="launch" data-mode="open" data-map="no">Tracker only</button>
@@ -32,7 +42,7 @@
   <div>
     <label>Sprite</label>
     <select id="sprite">
-      <option value="" selected>Default</option>
+      <option value="">Default</option>
       <option value="four-swords-link">Four Swords Link</option>
       <option value="boo">Boo</option>
       <option value="boy">Boy</option>
@@ -73,7 +83,7 @@
       <option value="old-man">Old Man</option>
       <option value="pink-ribbon-link">Pink Ribbon Link</option>
       <option value="popoi">Popoi</option>
-      <option value="pug">Pug</option>
+      <option value="pug" selected>Pug</option>
       <option value="purple-chest">Purple Chest</option>
       <option value="roy-koopa">Roy Koopa</option>
       <option value="rumia">Rumia</option>
@@ -101,9 +111,9 @@
   <div>
     <label>Scaling</label>
     <select id="scale">
-      <option value="">Unscaled 100%</option>
+      <option value="">selectedUnscaled 100%</option>
       <option value="90">Scaled 90%</option>
-      <option value="80">Scaled 80%</option>
+      <option value="80" >Scaled 80%</option>
       <option value="70">Scaled 70%</option>
       <option value="60">Scaled 60%</option>
     </select>
@@ -120,7 +130,9 @@
     </select>
     <input type="text" id="custom-color" class="hidden" title="css color i.e keyword, #RRGGBB" />
   </div>
-
+  <div>
+    <a class="" href="https://alttpr.com/en/randomizer">Take me to the RANDO!</a>
+  </div>
   <script>start()</script>
 
 </body>

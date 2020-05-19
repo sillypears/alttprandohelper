@@ -662,16 +662,16 @@
 
     function finalize_dungeons(dungeons, apply) {
         return update(map_values(dungeons, function(d) { return create(d); }), {
-            eastern:  { $apply: apply, $merge: { completed: false, prize: 0 } },
-            desert:   { $apply: apply, $merge: { completed: false, prize: 0 } },
-            hera:     { $apply: apply, $merge: { completed: false, prize: 0 } },
-            darkness: { $apply: apply, $merge: { completed: false, prize: 0 } },
-            swamp:    { $apply: apply, $merge: { completed: false, prize: 0 } },
-            skull:    { $apply: apply, $merge: { completed: false, prize: 0 } },
-            thieves:  { $apply: apply, $merge: { completed: false, prize: 0 } },
-            ice:      { $apply: apply, $merge: { completed: false, prize: 0 } },
-            mire:     { $apply: apply, $merge: { completed: false, prize: 0, medallion: 0 } },
-            turtle:   { $apply: apply, $merge: { completed: false, prize: 0, medallion: 0 } },
+            eastern:  { $apply: apply, $merge: { completed: false, prize: 3 } },
+            desert:   { $apply: apply, $merge: { completed: false, prize: 3 } },
+            hera:     { $apply: apply, $merge: { completed: false, prize: 3 } },
+            darkness: { $apply: apply, $merge: { completed: false, prize: 3 } },
+            swamp:    { $apply: apply, $merge: { completed: false, prize: 3 } },
+            skull:    { $apply: apply, $merge: { completed: false, prize: 3 } },
+            thieves:  { $apply: apply, $merge: { completed: false, prize: 3 } },
+            ice:      { $apply: apply, $merge: { completed: false, prize: 3 } },
+            mire:     { $apply: apply, $merge: { completed: false, prize: 3, medallion: 0 } },
+            turtle:   { $apply: apply, $merge: { completed: false, prize: 3, medallion: 0 } },
         });
     }
 

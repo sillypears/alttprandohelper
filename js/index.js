@@ -37,7 +37,7 @@
 
         open('tracker.html?' + query(params),
             '',
-            'width={width},height={height},titlebar=0,menubar=0,toolbar=0,scrollbars=0,resizable=0'
+            'titlebar=no,menubar=no,toolbar=no,scrollbars=no,resizable=no,width={width},height={height}'
                 .replace('{width}', size.w)
                 .replace('{height}', size.h));
         setTimeout('window.close()', 5000);
